@@ -7,7 +7,6 @@
   const CONTRACT = '5f897b54a8d7b2e3aa41752f15146285623528c01a217842c60afbc60631142f';
   const RPC = 'https://rpc.retium.org';
   const PAGE = 20;
-  const IMAGE_HOST = 'https://basepic.com/api/v1/images';
 
   const $ = (id) => document.getElementById(id);
   const connectBtn = $('connectBtn');
@@ -303,20 +302,36 @@
   }
 
   async function uploadImage(file) {
-    const safeName = (file.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_').slice(-80) || 'image';
-    const form = new FormData();
-    form.append('image', file, safeName);
-    const res = await fetch(IMAGE_HOST, { method: 'POST', body: form });
-    if (!res.ok) throw new Error('host returned ' + res.status);
+    // Send the image to our own /api/upload endpoint. On Vercel this is a
+    // serverless function; locally it is handled by serve.mjs. Same-origin
+    // means no CORS problems from any domain.
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Could not read the image'));
+      reader.readAsDataURL(file);
+    });
+    const base64 = String(dataUrl).split(',')[1];
+    if (!base64) throw new Error('Could not read the image');
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: file.name, mime: file.type, data: base64 }),
+    });
+    if (!res.ok) {
+      let reason = 'upload failed (' + res.status + ')';
+      try { const err = await res.json(); if (err.error) reason = err.error; } catch {}
+      throw new Error(reason);
+    }
     const data = await res.json();
-    if (!data.image_url) throw new Error('no URL in host response');
-    return data.image_url;
+    if (!data.url) throw new Error('no URL in upload response');
+    return data.url;
   }
 
   async function handleFile(file) {
     if (!file) return;
     if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
-    if (file.size > 16 * 1024 * 1024) { toast('Image must be under 16 MB.', 'error'); return; }
+    if (file.size > 4 * 1024 * 1024) { toast('Image must be under 4 MB.', 'error'); return; }
 
     upload.file = file;
     upload.uri = '';

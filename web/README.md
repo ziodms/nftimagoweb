@@ -16,9 +16,12 @@ Deep links: `/#market`, `/#mine`, `/#mint`.
 
 ## Mint flow (upload only)
 
-1. Drop an image (PNG/JPG/WEBP/GIF, max 16 MB) into the upload area or click to browse.
-2. The browser computes the **SHA-256** fingerprint locally, then uploads the file
-   to a free no-key host and receives a public `https://` URL.
+1. Drop an image (PNG/JPG/WEBP/GIF, max 4 MB) into the upload area or click to browse.
+2. The browser computes the **SHA-256** fingerprint locally, then sends the image
+   to the same-origin `/api/upload` endpoint. On Vercel this is a serverless
+   function (`api/upload.js`); locally it is handled by `serve.mjs`. It forwards
+   the file to a free no-key host and returns a public `https://` URL. Same-origin
+   means the upload works from any deployed domain, not just localhost.
 3. The URL and hash are filled in automatically. Add a name and click **Mint NFT**.
 4. The wallet signs the `mint` call; the page waits for `HardFinal`.
 

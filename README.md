@@ -15,6 +15,7 @@ Testnet coins have no value.
 | `lib.rs` | Retium contract: `mint`, `transfer`, `list`, `unlist`, `buy`, `get_token`, `tokens_by_owner`, `listed_tokens`, `total_supply`, `get_config` |
 | `Cargo.toml`, `Cargo.lock` | Standalone Rust crate for the contract |
 | `web/` | English-language frontend with wallet connect, image upload, SHA-256 hashing, minting and marketplace |
+| `api/upload.js` | Vercel serverless function forwarding uploads to the image host (avoids browser CORS) |
 | `logo/` | IMAGO logo asset |
 | `DEPLOY.md` | Deployment record and verification instructions |
 
