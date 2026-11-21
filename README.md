@@ -42,3 +42,4 @@ HTTPS and `localhost`. See `web/README.md` for details.
 ## Security
 
 Never commit key files, seeds or API keys. See `.gitignore`.
+"# imagonft" 
