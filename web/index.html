@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Imago — NFT mint & marketplace on the Retium testnet">
+  <title>Imago — NFT Market</title>
+  <link rel="icon" href="assets/imagologo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Imago home">
+        <span class="brand-rule"></span>
+        <img class="brand-logo" src="assets/imagologo.png" alt="IMAGO">
+        <span class="brand-sep"></span>
+        <span class="brand-sub">NFT MARKET</span>
+      </a>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="market" role="tab">Marketplace</button>
+        <button class="tab" data-tab="mine" role="tab">My NFTs</button>
+        <button class="tab" data-tab="mint" role="tab">Mint</button>
+      </nav>
+
+      <div class="wallet-area">
+        <span class="network"><i></i> Testnet</span>
+        <span class="balance" id="balance" hidden></span>
+        <button class="btn btn-connect" id="connectBtn">Connect Wallet</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="stats" aria-label="Contract overview">
+        <div class="stat"><span class="stat-label">Total supply</span><span class="stat-value" id="statSupply">—</span></div>
+        <div class="stat"><span class="stat-label">Listed now</span><span class="stat-value" id="statListed">—</span></div>
+        <div class="stat">
+          <span class="stat-label">Contract</span>
+          <span class="stat-value mono" id="statContract">—</span>
+          <button class="copy" id="copyContract" title="Copy contract address" aria-label="Copy contract address">COPY</button>
+        </div>
+        <div class="stat"><span class="stat-label">Protocol</span><span class="stat-value" id="statVersion">—</span></div>
+      </section>
+
+      <!-- MARKETPLACE -->
+      <section class="panel active" id="panel-market">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">EXPLORE</div>
+            <h1>Marketplace</h1>
+            <p>Discover NFTs listed for sale. Click a card for details and to buy.</p>
+          </div>
+          <button class="btn btn-ghost" id="refreshMarket">Refresh</button>
+        </div>
+        <div class="grid" id="marketGrid"></div>
+        <div class="empty" id="marketEmpty" hidden>
+          <img src="assets/imagologo.png" alt="">
+          <b>No listings yet</b>
+          <span>Be the first to mint an NFT and list it for sale.</span>
+        </div>
+        <div class="more-wrap"><button class="btn btn-ghost" id="marketMore" hidden>Load more</button></div>
+      </section>
+
+      <!-- MY NFTs -->
+      <section class="panel" id="panel-mine">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">COLLECTION</div>
+            <h1>My NFTs</h1>
+            <p>Items owned by the connected wallet.</p>
+          </div>
+          <button class="btn btn-ghost" id="refreshMine">Refresh</button>
+        </div>
+        <div class="notice" id="walletNotice">Connect your wallet to see your collection.</div>
+        <div class="grid" id="mineGrid"></div>
+        <div class="empty" id="mineEmpty" hidden>
+          <img src="assets/imagologo.png" alt="">
+          <b>Empty collection</b>
+          <span>Mint your first NFT to get started.</span>
+        </div>
+        <div class="more-wrap"><button class="btn btn-ghost" id="mineMore" hidden>Load more</button></div>
+      </section>
+
+      <!-- MINT -->
+      <section class="panel" id="panel-mint">
+        <div class="hero">
+          <div class="eyebrow">CREATE · VERIFY · OWN</div>
+          <h1>Mint your <em>NFT</em></h1>
+          <p>Upload an image. Its SHA-256 fingerprint and a public URL are written on-chain — the image itself stays off-chain.</p>
+          <span class="hero-ghost" aria-hidden="true"><img src="assets/imagologo.png" alt=""></span>
+        </div>
+
+        <div class="stepper">
+          <div class="step active" id="step1"><span>1</span> Upload image</div>
+          <div class="step-line"></div>
+          <div class="step" id="step2"><span>2</span> Name your token</div>
+          <div class="step-line"></div>
+          <div class="step" id="step3"><span>3</span> Sign &amp; mint</div>
+        </div>
+
+        <div class="mint-layout">
+          <div class="card upload-card">
+            <div class="card-head"><h2>Image</h2><span class="tag">PNG · JPG · WEBP · GIF · max 16 MB</span></div>
+
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload image">
+              <img class="dz-watermark" src="assets/imagologo.png" alt="">
+              <div class="dz-icon">⇧</div>
+              <b>Drop your image here</b>
+              <span>or click to browse from your device</span>
+              <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+            </div>
+
+            <div class="preview" id="preview" hidden>
+              <img id="previewImg" alt="Preview">
+              <div class="preview-meta">
+                <div class="meta-row"><span>File</span><b id="previewName">—</b></div>
+                <div class="meta-row"><span>Size</span><b id="previewSize">—</b></div>
+                <div class="meta-row"><span>Status</span><b id="uploadStatus" class="status-loading">Uploading…</b></div>
+                <div class="meta-row"><span>URL</span><b id="previewUri" class="mono">—</b></div>
+                <div class="meta-row"><span>SHA-256</span><b id="previewHash" class="mono">—</b></div>
+              </div>
+              <button class="btn btn-ghost btn-small" id="changeImage" type="button">Change image</button>
+              <button class="btn btn-ghost btn-small" id="retryUpload" type="button" hidden>Retry upload</button>
+            </div>
+
+            <button class="manual-toggle" id="manualToggle" type="button">Have an image URL already? Enter it manually</button>
+            <div class="manual-fields" id="manualFields" hidden>
+              <div class="field">
+                <label for="manualUri">Image URL</label>
+                <input id="manualUri" class="mono" placeholder="https://… / ipfs://… / ar://…">
+              </div>
+              <div class="field">
+                <label for="manualHash">SHA-256 hash</label>
+                <input id="manualHash" class="mono" placeholder="64 lowercase hex characters">
+              </div>
+            </div>
+          </div>
+
+          <div class="card details-card">
+            <div class="card-head"><h2>Token details</h2><span class="tag">IMMUTABLE</span></div>
+            <div class="field">
+              <label for="tokenName">Name</label>
+              <input id="tokenName" maxlength="48" placeholder="e.g. Imago #1" autocomplete="off">
+              <small>Max 48 bytes. Leading and trailing spaces are not allowed.</small>
+            </div>
+            <div class="summary" id="mintSummary">
+              <div class="meta-row"><span>Network</span><b>Retium testnet</b></div>
+              <div class="meta-row"><span>Contract</span><b class="mono" id="mintContract">—</b></div>
+              <div class="meta-row"><span>Gas</span><b>~0.50 RTM</b></div>
+            </div>
+            <button class="btn btn-primary btn-block btn-lg" id="mintBtn" type="button" disabled>Mint NFT</button>
+            <p class="form-hint" id="mintHint">Connect wallet and upload an image to continue.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Imago NFT Mint &amp; Market · Retium testnet · testnet coins have no value</span>
+      <span class="mono" id="footerContract">—</span>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal card" role="dialog" aria-modal="true" aria-label="Token details">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://wallet.retium.org/connect/sdk/retium-sdk-1.3.0.js"
+          integrity="sha384-FTG6s31+cSLKvZXfREum814s/L2AnqVyikuFQvMKIvFfAz40ksTcaXVbRmkHGGTU"
+          crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>

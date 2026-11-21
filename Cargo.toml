@@ -1,0 +1,26 @@
+[package]
+name = "imago"
+description = "Imago NFT Mint & Market contract"
+publish = false
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "lib.rs"
+
+[dependencies]
+retium-contract = { path = "../crates/retium-contract" }
+
+[dev-dependencies]
+serde_json = "1.0"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

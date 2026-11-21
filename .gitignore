@@ -1,0 +1,12 @@
+# Build artifacts
+/target/
+**/target/
+
+# Secrets and local key files — never commit these
+*.sk
+adres  dan api .txt
+*.zip
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
