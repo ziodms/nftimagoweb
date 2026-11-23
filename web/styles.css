@@ -56,7 +56,8 @@ body {
 }
 
 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.app { position: relative; isolation: isolate; max-width: 1160px; margin: 0 auto; padding: 0 28px 40px; }
+.app { position: relative; isolation: isolate; }
+.main { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
 
 /* A very faint grid gives the canvas a modern, technical feel. */
 .app::before {
@@ -74,7 +75,9 @@ body {
 .topbar {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; gap: 34px;
-  padding: 20px 0 18px;
+  padding-top: 20px; padding-bottom: 18px;
+  padding-left: max(28px, calc((100% - 1160px) / 2 + 28px));
+  padding-right: max(28px, calc((100% - 1160px) / 2 + 28px));
   background: linear-gradient(180deg, rgba(5, 6, 10, .95), rgba(5, 6, 10, .74));
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--line-soft);
@@ -376,7 +379,8 @@ body {
 
 .footer {
   display: flex; justify-content: space-between; gap: 18px;
-  margin-top: 50px; padding-top: 18px; border-top: 1px solid var(--line-soft);
+  max-width: 1160px; margin: 50px auto 0;
+  padding: 18px 28px 40px; border-top: 1px solid var(--line-soft);
   color: var(--faint); font-size: 9px; letter-spacing: .12em; text-transform: uppercase;
 }
 
@@ -387,8 +391,9 @@ body {
   .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line-soft); }
 }
 @media (max-width: 700px) {
-  .app { padding: 0 18px 30px; }
-  .topbar { flex-wrap: wrap; gap: 14px; }
+  .main { padding: 0 18px; }
+  .footer { padding: 18px 18px 30px; }
+  .topbar { flex-wrap: wrap; gap: 14px; padding-left: 18px; padding-right: 18px; }
   .tabs { order: 3; width: 100%; }
   .tab { margin-right: 20px; }
   .network, .balance { display: none; }
